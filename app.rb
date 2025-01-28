@@ -6,6 +6,13 @@ require 'bcrypt'
 
 enable :sessions
 
+before do
+  protected_routes = ['/projekt', '/skapa']
+  if protected_routes.include?(request.path_info) && !session[:id]
+    redirect('/')
+  end
+end
+
 get('/showlogin') do
   slim(:login)
 end
@@ -25,7 +32,7 @@ post('/login') do
 
   if BCrypt::Password.new(pwdigest) == password 
     session[:id] = id
-    redirect('/projekt')
+    redirect('/skapa')
   else
     "FEL LÖSEN!"
   end
@@ -58,5 +65,24 @@ post('/users/new') do
 end
 
 get('/skapa') do
- slim(:pass_skapare)
+  slim(:pass_skapare)
+end
+
+post('/pass_skapare') do 
+  flat_press_variation = params[:flat_press_variation]
+  incline_press_variation = params[:incline_press_variation]
+  fly_variation = params[:fly_variation]
+  shoulder_press_variation = params[:shoulder_press_variation]
+  later_raise_variation = params[:later_raise_variation]
+  rear_delt_cariation = params[:rear_delt_cariation]
+  tricep_compound = params[:tricep_compound]
+  single_arm_extension = params[:single_arm_extension]
+
+  db = SQLite3::Database.new('db/losen.db')
+  db.execute('INSERT INTO scheman (flat_press_variation,incline_press_variation,fly_variation,shoulder_press_variation,later_raise_variation,rear_delt_cariation,tricep_compound,single_arm_extension) VALUES (?,?,?,?,?,?,?,?)',[flat_press_variation,incline_press_variation,fly_variation,shoulder_press_variation,later_raise_variation,rear_delt_cariation,tricep_compound,single_arm_extension])
+  redirect('/skapa')
+end
+
+get('/profil') do
+  slim(:se_profil)
 end
