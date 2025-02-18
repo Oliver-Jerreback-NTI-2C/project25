@@ -27,16 +27,15 @@ post('/login') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true 
   result = db.execute("SELECT * FROM users WHERE username = ?", [username]).first
-  pwdigest = result["pwdigest"]
-  id = result["id"]
 
-  if BCrypt::Password.new(pwdigest) == password 
-    session[:id] = id
+  if result && BCrypt::Password.new(result["pwdigest"]) == password
+    session[:id] = result["id"]
+    session[:username] = result["username"]  
+    session[:title] = result["title"]        
     redirect('/skapa')
   else
     "FEL LÖSEN!"
   end
-
 end
 
 get('/projekt') do
@@ -44,6 +43,7 @@ get('/projekt') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true 
   result = db.execute("SELECT * FROM projekt WHERE user_id = ?",id)
+  result = db.execute("SELECT * FROM projekt WHERE title = ?",title)
   p "Alla projekt från result #{result}"
   slim(:'projekt/index', locals:{projekt:result})
 end
@@ -106,4 +106,9 @@ end
 
 get('/profil') do
   slim(:se_profil)
+end
+
+get('/logout') do
+  session.clear  
+  redirect('/showlogin')
 end
