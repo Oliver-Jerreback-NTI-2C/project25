@@ -1,5 +1,7 @@
 h1 Pass skaparen 
 
+h2 push 
+
 form action="pass_skapare" method="post" 
     select name="flat_press_variation"
         option value="Bench press" Bench press
@@ -21,7 +23,7 @@ form action="pass_skapare" method="post"
         option value="dumbell lateral raise" dumbell lateral raise
         option value="cable lateral raise" Cable lateral raise
         option value="machine lateral raise" Machine lateral raise
-    select name="rear_delt_cariation"
+    select name="rear_delt_variation"
         option value="reverse fly" Reverse fly
         option value="face pulls" face pulls
         option value="cable reverse fly" cable reverse fly
@@ -33,4 +35,57 @@ form action="pass_skapare" method="post"
         option value="single arm extension" single arm extension
         option value="carter extension" carter extension
         option value="katana extension" katana extension
+    input type="submit" value="Register new workout"
+
+h2 pull 
+form action="pass_skapare" method="post" 
+    select name="frontal_pull"
+        option value="lat_pulldown" lat_pulldown
+        option value="pull_up" pull_up
+        option value="singel_hand_lat_pulldown" singel_hand_lat_pulldown
+    select name="transversal_row"
+        option value="T-bar_row" T-bar_row
+        option value="wide_grip_cable_row" wide_grip_cable_row
+        option value="chest_supported_wide_grip_row" chest_supported_wide_grip_row
+    select name="sagital_pull"
+        option value="close_grip_row" close_grip_row
+        option value="jpg_pulldown" jpg_pulldown
+        option value="pull_overs" pull_overs
+    select name="curl_variation"
+        option value="preacher curl" preacher curl
+        option value="dumbell curl" dumbell curl
+        option value="barbell curl" barbell curl
+    select name="hammer_curl_var"
+        option value="hammer curl" hammer curl
+        option value="cable hammer curl" cable hammer curl
+        option value="preacher hammer curl" preacher hammer curl
+    input type="submit" value="Register new workout"
+
+
+h2 legs 
+form action="pass_skapare" method="post" 
+    select name="quad_comp"
+        option value="leg press" leg press
+        option value="squats" squats
+        option value="hack squat" hack squat
+    select name="leg_ext"
+        option value="leg extension" leg extension
+        option value="single lex extension" single lex extension
+    select name="hinge"
+        option value="barbell Romanian deadlift" barbell Romanian deadlift
+        option value="dumbell romanian deadlift" dumbell romanian deadlift
+        option value="cable romanian deadlift" cable romanian deadlift
+    select name="leg_curl"
+        option value="seated leg curl" seated leg curl
+        option value="laying leg curl" laying leg curl
+    select name="abbductor"
+        option value="abbductor machine" abbductor machine
+    select name="calf_raise"
+        option value="standing calf raise" standing calf raise
+        option value="seated calf raise" seated calf raise
+        option value="leg press calf raise" leg press calf raise
+    select name="abs"
+        option value="cable crunch" cable crunch
+        option value="sit ups" sit ups
+        option value="roller" roller
     input type="submit" value="Register new workout"
