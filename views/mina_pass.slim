@@ -1,6 +1,12 @@
 h2 Dina skapade pass
 
 h2 Push Pass
+-if session[:title] == "Fitness Beginner" 
+  h3 Rekommenderas svårighet mellan 8 - 12
+-elsif session[:title] == "Intermediate Trainer"
+  h3 Rekommenderas svårighet mellan 12 - 18
+-elsif session[:title] == "Advanced Athlete"
+  h3 Rekommenderas svårighet mellan 18 - 24
 table
     thead
       tr
@@ -13,22 +19,28 @@ table
         th Tricep Compound
         th Single Arm Extension
         th Svårighetsgrad
-    
-    / gör en if sats som säger ifall difficulty = 0 skippa att printa ut det
     tbody 
       - pass.each do |p|
-        tr
-          td= p["flat_press_variation"]
-          td= p["incline_press_variation"]
-          td= p["fly_variation"]
-          td= p["shoulder_press_variation"]
-          td= p["later_raise_variation"]
-          td= p["rear_delt_variation"]
-          td= p["tricep_compound"]
-          td= p["single_arm_extension"]
-          td= p["difficulty_push"]
+        - if p["difficulty_push"] && p["difficulty_push"] != 0  
+          tr
+            td= p["flat_press_variation"]
+            td= p["incline_press_variation"]
+            td= p["fly_variation"]
+            td= p["shoulder_press_variation"]
+            td= p["later_raise_variation"]
+            td= p["rear_delt_variation"]
+            td= p["tricep_compound"]
+            td= p["single_arm_extension"]
+            td= p["difficulty_push"]
 
+/ skapa if sats här som säger att ifall din title är beginner så rekomenderas denna siffran ifall det är intermediate så rekommenderas denna siffran samma med advanced
 h2 Pull Pass
+-if session[:title] == "Fitness Beginner" 
+  h3 Rekommenderas svårighet mellan 5 - 7
+-elsif session[:title] == "Intermediate Trainer"
+  h3 Rekommenderas svårighet mellan 7 - 10
+-elsif session[:title] == "Advanced Athlete"
+  h3 Rekommenderas svårighet mellan 10 - 15
 table
     thead
       tr
@@ -40,15 +52,22 @@ table
         th Svårighetsgrad
     tbody
       - pass.each do |p|
-        tr
-          td= p["frontal_pull"]
-          td= p["transversal_row"]
-          td= p["sagital_pull"]
-          td= p["curl_variation"]
-          td= p["hammer_curl_var"]
-          td= p["difficulty_pull"]
+        - if p["difficulty_pull"] && p["difficulty_pull"] != 0  
+          tr
+            td= p["frontal_pull"]
+            td= p["transversal_row"]
+            td= p["sagital_pull"]
+            td= p["curl_variation"]
+            td= p["hammer_curl_var"]
+            td= p["difficulty_pull"]
 
 h2 Legs Pass
+-if session[:title] == "Fitness Beginner" 
+  h3 Rekommenderas svårighet mellan 5 - 7
+-elsif session[:title] == "Intermediate Trainer"
+  h3 Rekommenderas svårighet mellan 7 - 10
+-elsif session[:title] == "Advanced Athlete"
+  h3 Rekommenderas svårighet mellan 10 - 15
 table
     thead
       tr
@@ -62,12 +81,14 @@ table
         th Svårighetsgrad
     tbody
       - pass.each do |p|
-        tr
-          td= p["quad_com"]
-          td= p["leg_ext"]
-          td= p["hinge"]
-          td= p["leg_curl"]
-          td= p["abbductor"]
-          td= p["calf_raise"]
-          td= p["abs"]
-          td= p["difficulty_legs"]
+        - if p["difficulty_legs"] && p["difficulty_legs"] != 0 
+          tr
+            td= p["quad_com"]
+            td= p["leg_ext"]
+            td= p["hinge"]
+            td= p["leg_curl"]
+            td= p["abbductor"]
+            td= p["calf_raise"]
+            td= p["abs"]
+            td= p["difficulty_legs"]
+

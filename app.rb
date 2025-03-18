@@ -72,7 +72,6 @@ post('/pass_skapare') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
 
-  # Hämta alla valda övningar från formuläret
   flat_press_variation = params[:flat_press_variation]
   incline_press_variation = params[:incline_press_variation]
   fly_variation = params[:fly_variation]
