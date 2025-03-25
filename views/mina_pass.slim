@@ -8,32 +8,34 @@ h2 Push Pass
 -elsif session[:title] == "Advanced Athlete"
   h3 Rekommenderas svårighet mellan 18 - 24
 table
-    thead
-      tr
-        th Flat Press
-        th Incline Press
-        th Fly
-        th Shoulder Press
-        th Lateral Raise
-        th Rear Delt
-        th Tricep Compound
-        th Single Arm Extension
-        th Svårighetsgrad
-    tbody 
-      - pass.each do |p|
-        - if p["difficulty_push"] && p["difficulty_push"] != 0  
-          tr
-            td= p["flat_press_variation"]
-            td= p["incline_press_variation"]
-            td= p["fly_variation"]
-            td= p["shoulder_press_variation"]
-            td= p["later_raise_variation"]
-            td= p["rear_delt_variation"]
-            td= p["tricep_compound"]
-            td= p["single_arm_extension"]
-            td= p["difficulty_push"]
+  thead
+    tr
+      th Flat Press
+      th Incline Press
+      th Fly
+      th Shoulder Press
+      th Lateral Raise
+      th Rear Delt
+      th Tricep Compound
+      th Single Arm Extension
+      th Svårighetsgrad
+      th Alternativ
+  tbody 
+    - pass.each do |p|
+      - if p["difficulty_push"] && p["difficulty_push"] != 0  
+        tr
+          td= p["flat_press_variation"]
+          td= p["incline_press_variation"]
+          td= p["fly_variation"]
+          td= p["shoulder_press_variation"]
+          td= p["later_raise_variation"]
+          td= p["rear_delt_variation"]
+          td= p["tricep_compound"]
+          td= p["single_arm_extension"]
+          td= p["difficulty_push"]
+          td
+            a href="/redigera_pass/#{p['id']}" Redigera
 
-/ skapa if sats här som säger att ifall din title är beginner så rekomenderas denna siffran ifall det är intermediate så rekommenderas denna siffran samma med advanced
 h2 Pull Pass
 -if session[:title] == "Fitness Beginner" 
   h3 Rekommenderas svårighet mellan 5 - 7
@@ -42,24 +44,27 @@ h2 Pull Pass
 -elsif session[:title] == "Advanced Athlete"
   h3 Rekommenderas svårighet mellan 10 - 15
 table
-    thead
-      tr
-        th Frontal Pull
-        th Transversal Row
-        th Sagital Pull
-        th Curl Variation
-        th Hammer Curl
-        th Svårighetsgrad
-    tbody
-      - pass.each do |p|
-        - if p["difficulty_pull"] && p["difficulty_pull"] != 0  
-          tr
-            td= p["frontal_pull"]
-            td= p["transversal_row"]
-            td= p["sagital_pull"]
-            td= p["curl_variation"]
-            td= p["hammer_curl_var"]
-            td= p["difficulty_pull"]
+  thead
+    tr
+      th Frontal Pull
+      th Transversal Row
+      th Sagital Pull
+      th Curl Variation
+      th Hammer Curl
+      th Svårighetsgrad
+      th Alternativ
+  tbody
+    - pass.each do |p|
+      - if p["difficulty_pull"] && p["difficulty_pull"] != 0  
+        tr
+          td= p["frontal_pull"]
+          td= p["transversal_row"]
+          td= p["sagital_pull"]
+          td= p["curl_variation"]
+          td= p["hammer_curl_var"]
+          td= p["difficulty_pull"]
+          td
+            a href="/redigera_pass/#{p['id']}" Redigera
 
 h2 Legs Pass
 -if session[:title] == "Fitness Beginner" 
@@ -69,26 +74,29 @@ h2 Legs Pass
 -elsif session[:title] == "Advanced Athlete"
   h3 Rekommenderas svårighet mellan 10 - 15
 table
-    thead
-      tr
-        th Quad Compound
-        th Leg Extension
-        th Hinge
-        th Leg Curl
-        th Abductor
-        th Calf Raise
-        th Abs
-        th Svårighetsgrad
-    tbody
-      - pass.each do |p|
-        - if p["difficulty_legs"] && p["difficulty_legs"] != 0 
-          tr
-            td= p["quad_com"]
-            td= p["leg_ext"]
-            td= p["hinge"]
-            td= p["leg_curl"]
-            td= p["abbductor"]
-            td= p["calf_raise"]
-            td= p["abs"]
-            td= p["difficulty_legs"]
+  thead
+    tr
+      th Quad Compound
+      th Leg Extension
+      th Hinge
+      th Leg Curl
+      th Abductor
+      th Calf Raise
+      th Abs
+      th Svårighetsgrad
+      th Alternativ
+  tbody
+    - pass.each do |p|
+      - if p["difficulty_legs"] && p["difficulty_legs"] != 0 
+        tr
+          td= p["quad_com"]
+          td= p["leg_ext"]
+          td= p["hinge"]
+          td= p["leg_curl"]
+          td= p["abbductor"]
+          td= p["calf_raise"]
+          td= p["abs"]
+          td= p["difficulty_legs"]
+          td
+            a href="/redigera_pass/#{p['id']}" Redigera
 

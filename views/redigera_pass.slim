@@ -1,0 +1,90 @@
+h1 Redigera pass
+
+form action="/update_pass/#{pass['id']}" method="post"
+  - if pass["difficulty_push"] && pass["difficulty_push"] != 0
+    h2 Push Pass
+    select name="flat_press_variation"
+      - ["Bench press", "chest press", "flat dumbell press"].each do |option|
+        option value=option selected=(pass["flat_press_variation"] == option) = option
+    
+    select name="incline_press_variation"
+      - ["incline bench press", "incline chest press", "incline dumbell press"].each do |option|
+        option value=option selected=(pass["incline_press_variation"] == option) = option
+
+    select name="fly_variation"
+      - ["pec deck fly", "cable fly", "dumbell fly"].each do |option|
+        option value=option selected=(pass["fly_variation"] == option) = option
+
+    select name="shoulder_press_variation"
+      - ["smith shoulder press", "dumbell shoulder press", "machine shoulder press"].each do |option|
+        option value=option selected=(pass["shoulder_press_variation"] == option) = option
+
+    select name="later_raise_variation"
+      - ["dumbell lateral raise", "cable lateral raise", "machine lateral raise"].each do |option|
+        option value=option selected=(pass["later_raise_variation"] == option) = option
+
+    select name="rear_delt_variation"
+      - ["reverse fly", "face pull", "cable reverse fly"].each do |option|
+        option value=option selected=(pass["rear_delt_variation"] == option) = option
+
+    select name="tricep_compound"
+      - ["dips", "tricep pushdown", "cable tricep extension"].each do |option|
+        option value=option selected=(pass["tricep_compound"] == option) = option
+
+    select name="single_arm_extension"
+      - ["single arm extension", "carter extension", "katana extension"].each do |option|
+        option value=option selected=(pass["single_arm_extension"] == option) = option
+
+  - elsif pass["difficulty_pull"] && pass["difficulty_pull"] != 0
+    h2 Pull Pass
+    select name="frontal_pull"
+      - ["lat_pulldown", "pull_up", "single_hand_lat_pulldown"].each do |option|
+        option value=option selected=(pass["frontal_pull"] == option) = option
+    
+    select name="transversal_row"
+      - ["T-bar_row", "wide_grip_cable_row", "chest_supported_wide_grip_row"].each do |option|
+        option value=option selected=(pass["transversal_row"] == option) = option
+
+    select name="sagital_pull"
+      - ["close_grip_row", "jpg_pulldown", "pull_overs"].each do |option|
+        option value=option selected=(pass["sagital_pull"] == option) = option
+
+    select name="curl_variation"
+      - ["preacher curl", "dumbell curl", "barbell curl"].each do |option|
+        option value=option selected=(pass["curl_variation"] == option) = option
+
+    select name="hammer_curl_var"
+      - ["hammer curl", "cable hammer curl", "preacher hammer curl"].each do |option|
+        option value=option selected=(pass["hammer_curl_var"] == option) = option
+
+  - elsif pass["difficulty_legs"] && pass["difficulty_legs"] != 0
+    h2 Legs Pass
+    select name="quad_com"
+      - ["leg press", "squats", "hack squat"].each do |option|
+        option value=option selected=(pass["quad_com"] == option) = option
+    
+    select name="leg_ext"
+      - ["leg extension", "single leg extension"].each do |option|
+        option value=option selected=(pass["leg_ext"] == option) = option
+
+    select name="hinge"
+      - ["barbell Romanian deadlift", "dumbell Romanian deadlift", "cable romanian deadlift"].each do |option|
+        option value=option selected=(pass["hinge"] == option) = option
+
+    select name="leg_curl"
+      - ["seated leg curl", "laying leg curl"].each do |option|
+        option value=option selected=(pass["leg_curl"] == option) = option
+
+    select name="abbductor"
+      - ["abbductor machine"].each do |option|
+        option value=option selected=(pass["abbductor"] == option) = option
+
+    select name="calf raise"
+      - ["standing calf raise", "seated calf raise", "leg press calf raise"].each do |option|
+        option value=option selected=(pass["calf raise"] == option) = option
+    
+    select name="abs"
+      - ["cable crunch", "sit ups", "roller"].each do |option|
+        option value=option selected=(pass["abs"] == option) = option
+
+  input type="submit" value="Spara ändringar"

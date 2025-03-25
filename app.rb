@@ -153,7 +153,7 @@ end
 
 get('/logout') do
   session.clear  
-  redirect('/showlogin')
+  redirect('/')
 end
 
 get('/mina_pass') do
@@ -163,4 +163,74 @@ get('/mina_pass') do
   result = db.execute("SELECT * FROM scheman WHERE user_id = ?", [id])
   
   slim(:mina_pass, locals: { pass: result })
+end
+
+post('/radera_profil') do
+  id = session[:id]
+  if id
+    db = SQLite3::Database.new('db/losen.db')
+    db.execute("DELETE FROM users WHERE id = ?", [id])
+    
+    session.clear  # Logga ut användaren
+    redirect('/')  # Skicka dem tillbaka till startsidan
+  else
+    redirect('/profil') # Om ingen session finns, stanna kvar på profilen
+  end
+end
+
+  get('/redigera_pass/:id') do
+    id = params[:id].to_i
+    db = SQLite3::Database.new('db/losen.db')
+    db.results_as_hash = true
+    pass = db.execute("SELECT * FROM scheman WHERE id = ?", [id]).first
+    slim(:redigera_pass, locals: { pass: pass })
+  end
+
+post('/update_pass/:id') do
+  id = params[:id].to_i
+
+  # Push Pass
+  flat_press_variation = params[:flat_press_variation] || ""
+  incline_press_variation = params[:incline_press_variation] || ""
+  fly_variation = params[:fly_variation] || ""
+  shoulder_press_variation = params[:shoulder_press_variation] || ""
+  later_raise_variation = params[:later_raise_variation] || ""
+  rear_delt_variation = params[:rear_delt_variation] || ""
+  tricep_compound = params[:tricep_compound] || ""
+  single_arm_extension = params[:single_arm_extension] || ""
+
+  # Pull Pass
+  frontal_pull = params[:frontal_pull] || ""
+  transversal_row = params[:transversal_row] || ""
+  sagital_pull = params[:sagital_pull] || ""
+  curl_variation = params[:curl_variation] || ""
+  hammer_curl_var = params[:hammer_curl_var] || ""  # Matchar HTML-fältet nu
+
+  # Legs Pass
+  quad_com = params[:quad_com] || ""
+  leg_ext = params[:leg_ext] || ""
+  hinge = params[:hinge] || ""
+  leg_curl = params[:leg_curl] || ""
+  abbductor = params[:abbductor] || ""  # Fixat stavfel från "abbductor"
+  calf_raise = params[:calf_raise] || ""
+  abs = params[:abs] || ""
+
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
+
+  db.execute("UPDATE scheman SET 
+              flat_press_variation = ?, incline_press_variation = ?, fly_variation = ?, 
+              shoulder_press_variation = ?, later_raise_variation = ?, rear_delt_variation = ?, 
+              tricep_compound = ?, single_arm_extension = ?, 
+              frontal_pull = ?, transversal_row = ?, sagital_pull = ?, curl_variation = ?, hammer_curl_var = ?, 
+              quad_com = ?, leg_ext = ?, hinge = ?, leg_curl = ?, abbductor = ?, calf_raise = ?, abs = ? 
+              WHERE id = ?", 
+              [flat_press_variation, incline_press_variation, fly_variation, 
+               shoulder_press_variation, later_raise_variation, rear_delt_variation, 
+               tricep_compound, single_arm_extension, frontal_pull, transversal_row, sagital_pull, 
+               curl_variation, hammer_curl_var, quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, 
+               abs, id])
+
+  db.close
+  redirect('/mina_pass')
 end
