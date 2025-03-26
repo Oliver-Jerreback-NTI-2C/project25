@@ -1,12 +1,19 @@
-h1 Du är våran #{session[:id]} användare
-h1 du är en  #{session[:title]}!
 h1 Hej #{session[:username]}!
+h1 Du är våran #{session[:id]} användare
+h1 Din nuvarande titel är: #{session[:title]}
+h2 ifall du skulle vilja updatera din titel gör det här
+form action="/uppdatera_titel" method="post"
+  select name="title"
+    option value="Fitness Beginner" Fitness Beginner
+    option value="Intermediate Trainer" Intermediate Trainer
+    option value="Advanced Athlete" Advanced Athlete
+  input type="submit" value="Uppdatera titel"
 
 h2 
-    a href="/mina_pass" dina skapade pass
+  a href="/mina_pass" dina skapade pass
 
 h2  
-    a href="/alla_pass" alla våra användares skapade pass
+  a href="/alla_pass" alla våra användares skapade pass
 
 h2
   form action="/radera_profil" method="post"

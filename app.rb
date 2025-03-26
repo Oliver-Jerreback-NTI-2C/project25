@@ -234,3 +234,23 @@ post('/update_pass/:id') do
   db.close
   redirect('/mina_pass')
 end
+
+post('/radera_pass/:id') do
+  id = params[:id].to_i
+  db = SQLite3::Database.new('db/losen.db')
+  db.execute("DELETE FROM scheman WHERE id = ?", [id])
+  redirect('/mina_pass')
+end
+
+post('/uppdatera_titel') do
+  new_title = params[:title]
+  id = session[:id]
+
+  if id
+    db = SQLite3::Database.new('db/losen.db')
+    db.execute("UPDATE users SET title = ? WHERE id = ?", [new_title, id])
+    session[:title] = new_title  # Uppdatera sessionen direkt
+  end
+
+  redirect('/profil')  # Ladda om profilsidan
+end

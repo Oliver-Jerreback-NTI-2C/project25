@@ -35,6 +35,8 @@ table
           td= p["difficulty_push"]
           td
             a href="/redigera_pass/#{p['id']}" Redigera
+            form action="/radera_pass/#{p['id']}" method="post" style="display:inline;"
+              input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
 
 h2 Pull Pass
 -if session[:title] == "Fitness Beginner" 
@@ -65,6 +67,8 @@ table
           td= p["difficulty_pull"]
           td
             a href="/redigera_pass/#{p['id']}" Redigera
+            form action="/radera_pass/#{p['id']}" method="post" style="display:inline;"
+              input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
 
 h2 Legs Pass
 -if session[:title] == "Fitness Beginner" 
@@ -99,4 +103,5 @@ table
           td= p["difficulty_legs"]
           td
             a href="/redigera_pass/#{p['id']}" Redigera
-
+            form action="/radera_pass/#{p['id']}" method="post" style="display:inline;"
+              input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
