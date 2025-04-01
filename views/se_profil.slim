@@ -1,5 +1,8 @@
 h1 Hej #{session[:username]}!
-h1 Du är våran #{session[:id]} användare
+- if session[:id] == 1 
+  h1 Du är vår första användare!!!
+- else 
+  h1 Du är en av våra #{session[:id]} användare
 h1 Din nuvarande titel är: #{session[:title]}
 h2 ifall du skulle vilja updatera din titel gör det här
 form action="/uppdatera_titel" method="post"
@@ -12,9 +15,12 @@ form action="/uppdatera_titel" method="post"
 h2 
   a href="/mina_pass" dina skapade pass
 
+- if session[:role] == "owner"
+  h3 Hej adminen du har rätt att redigera pass samt radera pass. Går du in på alla skapade pass kan du även redigera titeln på användaren
 h2  
   a href="/alla_pass" alla våra användares skapade pass
 
 h2
   form action="/radera_profil" method="post"
     input type="submit" value="Radera min profil" onclick="return confirm('Är du säker på att du vill radera ditt konto?')"
+    

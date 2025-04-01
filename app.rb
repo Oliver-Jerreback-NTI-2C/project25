@@ -23,15 +23,16 @@ end
 
 post('/login') do
   username = params[:username]
-  password = params[:password] 
+  password = params[:password]
   db = SQLite3::Database.new('db/losen.db')
-  db.results_as_hash = true 
+  db.results_as_hash = true
   result = db.execute("SELECT * FROM users WHERE username = ?", [username]).first
 
   if result && BCrypt::Password.new(result["pwdigest"]) == password
     session[:id] = result["id"]
-    session[:username] = result["username"]  
-    session[:title] = result["title"]        
+    session[:username] = result["username"]
+    session[:role] = result["role"] 
+    session[:title] = result["title"]
     redirect('/skapa')
   else
     "FEL LÖSEN!"
@@ -54,15 +55,24 @@ post('/users/new') do
   password_confirm = params[:password_confirm]
   title = params[:title]
 
-  if (password == password_confirm)
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
+
+  existing_user = db.execute("SELECT * FROM users WHERE username = ?", [username]).first
+
+  if existing_user
+    return "Försök igen! Det finns redan en användare med detta namn."
+  end
+
+  if password == password_confirm
     password_digest = BCrypt::Password.create(password)
-    db = SQLite3::Database.new('db/losen.db')
-    db.execute('INSERT INTO users (username,pwdigest,title) VALUES (?,?,?)',[username,password_digest,title])
+    db.execute('INSERT INTO users (username, pwdigest, title) VALUES (?, ?, ?)', [username, password_digest, title])
     redirect('/showlogin')
   else
     "Lösenorden matchade inte"
   end
 end
+
 
 get('/skapa') do
   slim(:pass_skapare)
@@ -144,8 +154,6 @@ post('/pass_skapare') do
 
   redirect('/skapa')
 end
-
-
 
 get('/profil') do
   slim(:se_profil)
@@ -232,25 +240,46 @@ post('/update_pass/:id') do
                abs, id])
 
   db.close
-  redirect('/mina_pass')
+  redirect('/profil')
 end
 
 post('/radera_pass/:id') do
   id = params[:id].to_i
   db = SQLite3::Database.new('db/losen.db')
   db.execute("DELETE FROM scheman WHERE id = ?", [id])
-  redirect('/mina_pass')
+  redirect request.referer
 end
 
 post('/uppdatera_titel') do
   new_title = params[:title]
-  id = session[:id]
+  user_id = params[:user_id]
 
-  if id
-    db = SQLite3::Database.new('db/losen.db')
-    db.execute("UPDATE users SET title = ? WHERE id = ?", [new_title, id])
+  db = SQLite3::Database.new('db/losen.db')
+
+  # Om en owner uppdaterar en annan användares titel
+  if session[:role] == "owner" && user_id
+    db.execute("UPDATE users SET title = ? WHERE id = ?", [new_title, user_id])
+  # Annars uppdaterar användaren bara sin egen titel
+  elsif session[:id]
+    db.execute("UPDATE users SET title = ? WHERE id = ?", [new_title, session[:id]])
     session[:title] = new_title  # Uppdatera sessionen direkt
   end
 
-  redirect('/profil')  # Ladda om profilsidan
+  redirect('/profil')
 end
+
+get('/alla_pass') do
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
+
+  users = db.execute("SELECT id, username, title FROM users") # Lägg till title här
+  passes = db.execute("SELECT * FROM scheman")
+
+  user_passes = {}
+  users.each do |user|
+    user_passes[user["username"]] = passes.select { |p| p["user_id"] == user["id"] }
+  end
+
+  slim(:alla_pass, locals: { user_passes: user_passes, users: users })
+end
+

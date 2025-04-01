@@ -1,0 +1,117 @@
+h2 Alla Användares Pass
+
+- if session[:role] == "owner"
+  h3 Du har rätt att redigera och radera pass och till och med redigera deras titel
+- user_passes.each do |username, passes|
+  h3= "#{username}s Pass: "
+  - if session[:role] == "owner"
+        / h2= "#{username} nuvarandare titel: #{username[:title]}"
+        / form action="/uppdatera_titel" method="post"
+        /     select name="title"
+        /         option value="Fitness Beginner" Fitness Beginner
+        /         option value="Intermediate Trainer" Intermediate Trainer
+        /         option value="Advanced Athlete" Advanced Athlete
+        /     input type="submit" value="Uppdatera titel"
+
+  - push_passes = passes.select { |p| p["difficulty_push"] && p["difficulty_push"] != 0 }
+  - pull_passes = passes.select { |p| p["difficulty_pull"] && p["difficulty_pull"] != 0 }
+  - legs_passes = passes.select { |p| p["difficulty_legs"] && p["difficulty_legs"] != 0 }
+
+  - if push_passes.any? || pull_passes.any? || legs_passes.any?
+
+    - if push_passes.any?
+      h4 Push Pass
+      table
+        thead
+          tr
+            th Flat Press
+            th Incline Press
+            th Fly
+            th Shoulder Press
+            th Lateral Raise
+            th Rear Delt
+            th Tricep Compound
+            th Single Arm Extension
+            th Svårighetsgrad
+            - if session[:role] == "owner"
+              th Alternativ
+        tbody
+          - push_passes.each do |p|
+            tr
+              td= p["flat_press_variation"]
+              td= p["incline_press_variation"]
+              td= p["fly_variation"]
+              td= p["shoulder_press_variation"]
+              td= p["later_raise_variation"]
+              td= p["rear_delt_variation"]
+              td= p["tricep_compound"]
+              td= p["single_arm_extension"]
+              td= p["difficulty_push"]
+              - if session[:role] == "owner"
+                td
+                  a href="/redigera_pass/#{p['id']}" Redigera
+                  form action="/radera_pass/#{p['id']}" method="post" style="display:inline;"
+                    input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
+
+    - if pull_passes.any?
+      h4 Pull Pass
+      table
+        thead
+          tr
+            th Frontal Pull
+            th Transversal Row
+            th Sagital Pull
+            th Curl Variation
+            th Hammer Curl
+            th Svårighetsgrad
+            - if session[:role] == "owner"
+              th Alternativ
+        tbody
+          - pull_passes.each do |p|
+            tr
+              td= p["frontal_pull"]
+              td= p["transversal_row"]
+              td= p["sagital_pull"]
+              td= p["curl_variation"]
+              td= p["hammer_curl_var"]
+              td= p["difficulty_pull"]
+              - if session[:role] == "owner"
+                td
+                  a href="/redigera_pass/#{p['id']}" Redigera
+                  form action="/radera_pass/#{p['id']}" method="post" style="display:inline;"
+                    input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
+
+    - if legs_passes.any?
+      h4 Legs Pass
+      table
+        thead
+          tr
+            th Quad Compound
+            th Leg Extension
+            th Hinge
+            th Leg Curl
+            th Abductor
+            th Calf Raise
+            th Abs
+            th Svårighetsgrad
+            - if session[:role] == "owner"
+              th Alternativ
+        tbody
+          - legs_passes.each do |p|
+            tr
+              td= p["quad_com"]
+              td= p["leg_ext"]
+              td= p["hinge"]
+              td= p["leg_curl"]
+              td= p["abbductor"]
+              td= p["calf_raise"]
+              td= p["abs"]
+              td= p["difficulty_legs"]
+              - if session[:role] == "owner"
+                td
+                  a href="/redigera_pass/#{p['id']}" Redigera
+                  form action="/radera_pass/#{p['id']}" method="post" style="display:inline;"
+                    input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
+
+  - else
+    p Denna användaren har inte skapat några pass.

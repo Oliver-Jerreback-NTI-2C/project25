@@ -21,7 +21,7 @@ table
       th Svårighetsgrad
       th Alternativ
   tbody 
-    - pass.each do |p|
+    - pass.each do |p|  
       - if p["difficulty_push"] && p["difficulty_push"] != 0  
         tr
           td= p["flat_press_variation"]
