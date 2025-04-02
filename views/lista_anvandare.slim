@@ -1,0 +1,26 @@
+h1 Lista på alla användare
+- if users.empty?
+  p Inga användare hittades.
+- else
+  table
+    thead
+      tr
+        th Användarnamn
+        th Titel
+        th Uppdatera titel
+    tbody
+      - users.each do |user|
+        tr
+          td = user['username']
+          td = user['title']
+          td
+            form action="/uppdatera_titel" method="post"
+              input type="hidden" name="user_id" value="#{user['id']}"
+              select name="title"
+                option value="Fitness Beginner" Fitness Beginner
+                option value="Intermediate Trainer" Intermediate Trainer
+                option value="Advanced Athlete" Advanced Athlete
+              input type="submit" value="Uppdatera titel"
+          td
+            form action="/radera_anvandare2/#{user['id']}" method="post" onsubmit="return confirm('Är du säker på att du vill radera detta konto?')"
+              input type="submit" value="Radera"

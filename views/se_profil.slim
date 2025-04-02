@@ -16,9 +16,17 @@ h2
   a href="/mina_pass" dina skapade pass
 
 - if session[:role] == "owner"
-  h3 Hej adminen du har rätt att redigera pass samt radera pass. Går du in på alla skapade pass kan du även redigera titeln på användaren
+  h3 Hej adminen du har rätt att redigera pass samt radera pass i länken nedan.
+
 h2  
   a href="/alla_pass" alla våra användares skapade pass
+h2 
+- if session[:role] == "owner"
+  h3 Hej admin du kan se en lista på användare och deras titalr i länken nedan du även redigera titeln på användaren
+
+- if session[:role] == "owner"
+  h2 
+    a href="/lista_anvandare" En lista på alla användare
 
 h2
   form action="/radera_profil" method="post"

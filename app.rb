@@ -186,12 +186,24 @@ post('/radera_profil') do
   end
 end
 
-  get('/redigera_pass/:id') do
+post('/radera_anvandare2/:id') do
+  user_id = params[:id].to_i
+  db = SQLite3::Database.new('db/losen.db')
+  
+  # Ta bort användaren från databasen
+  db.execute("DELETE FROM users WHERE id = ?", [user_id])
+  db.execute("DELETE FROM scheman WHERE user_id = ?", [user_id]) # Ta bort scheman som är kopplade till användaren
+  
+  redirect('/lista_anvandare')  # Skicka användaren tillbaka till användarlistan
+end
+
+
+  get('/redigera_pass2/:id') do
     id = params[:id].to_i
     db = SQLite3::Database.new('db/losen.db')
     db.results_as_hash = true
     pass = db.execute("SELECT * FROM scheman WHERE id = ?", [id]).first
-    slim(:redigera_pass, locals: { pass: pass })
+    slim(:redigera_pass2, locals: { pass: pass })
   end
 
 post('/update_pass/:id') do
@@ -240,7 +252,64 @@ post('/update_pass/:id') do
                abs, id])
 
   db.close
-  redirect('/profil')
+  redirect('/mina_pass')
+end
+
+get('/redigera_pass/:id') do
+  id = params[:id].to_i
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
+  pass = db.execute("SELECT * FROM scheman WHERE id = ?", [id]).first
+  slim(:redigera_pass, locals: { pass: pass })
+end
+
+post('/update_pass2/:id') do
+  id = params[:id].to_i
+
+  # Push Pass
+  flat_press_variation = params[:flat_press_variation] || ""
+  incline_press_variation = params[:incline_press_variation] || ""
+  fly_variation = params[:fly_variation] || ""
+  shoulder_press_variation = params[:shoulder_press_variation] || ""
+  later_raise_variation = params[:later_raise_variation] || ""
+  rear_delt_variation = params[:rear_delt_variation] || ""
+  tricep_compound = params[:tricep_compound] || ""
+  single_arm_extension = params[:single_arm_extension] || ""
+
+  # Pull Pass
+  frontal_pull = params[:frontal_pull] || ""
+  transversal_row = params[:transversal_row] || ""
+  sagital_pull = params[:sagital_pull] || ""
+  curl_variation = params[:curl_variation] || ""
+  hammer_curl_var = params[:hammer_curl_var] || ""  # Matchar HTML-fältet nu
+
+  # Legs Pass
+  quad_com = params[:quad_com] || ""
+  leg_ext = params[:leg_ext] || ""
+  hinge = params[:hinge] || ""
+  leg_curl = params[:leg_curl] || ""
+  abbductor = params[:abbductor] || ""  # Fixat stavfel från "abbductor"
+  calf_raise = params[:calf_raise] || ""
+  abs = params[:abs] || ""
+
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
+
+  db.execute("UPDATE scheman SET 
+              flat_press_variation = ?, incline_press_variation = ?, fly_variation = ?, 
+              shoulder_press_variation = ?, later_raise_variation = ?, rear_delt_variation = ?, 
+              tricep_compound = ?, single_arm_extension = ?, 
+              frontal_pull = ?, transversal_row = ?, sagital_pull = ?, curl_variation = ?, hammer_curl_var = ?, 
+              quad_com = ?, leg_ext = ?, hinge = ?, leg_curl = ?, abbductor = ?, calf_raise = ?, abs = ? 
+              WHERE id = ?", 
+              [flat_press_variation, incline_press_variation, fly_variation, 
+               shoulder_press_variation, later_raise_variation, rear_delt_variation, 
+               tricep_compound, single_arm_extension, frontal_pull, transversal_row, sagital_pull, 
+               curl_variation, hammer_curl_var, quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, 
+               abs, id])
+
+  db.close
+  redirect('/alla_pass')
 end
 
 post('/radera_pass/:id') do
@@ -268,18 +337,26 @@ post('/uppdatera_titel') do
   redirect('/profil')
 end
 
+
 get('/alla_pass') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
+  
+  # Hämta alla pass och inkludera användarnamn från users-tabellen
+  result = db.execute("SELECT scheman.*, users.username FROM scheman 
+                      JOIN users ON scheman.user_id = users.id 
+                      ORDER BY users.username DESC, scheman.id DESC")
 
-  users = db.execute("SELECT id, username, title FROM users") # Lägg till title här
-  passes = db.execute("SELECT * FROM scheman")
+  slim(:alla_pass, locals: { pass: result })
+end
 
-  user_passes = {}
-  users.each do |user|
-    user_passes[user["username"]] = passes.select { |p| p["user_id"] == user["id"] }
-  end
+get('/lista_anvandare') do
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
 
-  slim(:alla_pass, locals: { user_passes: user_passes, users: users })
+  # Hämta alla användare och deras titlar
+  result = db.execute("SELECT id, username, title FROM users ORDER BY username")
+
+  slim(:lista_anvandare, locals: { users: result })
 end
 
