@@ -354,9 +354,10 @@ get('/lista_anvandare') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
 
-  # Hämta alla användare och deras titlar
-  result = db.execute("SELECT id, username, title FROM users ORDER BY username")
+  # Hämta alla användare och deras titlar, men filtrera bort användaren med användarnamnet 'admin'
+  result = db.execute("SELECT id, username, title FROM users WHERE username != 'admin' ORDER BY username")
 
   slim(:lista_anvandare, locals: { users: result })
 end
+
 
