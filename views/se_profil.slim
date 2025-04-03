@@ -1,8 +1,12 @@
 h1 Hej #{session[:username]}!
-- if session[:id] == 1 
-  h1 Du är vår första användare!!!
+- db = SQLite3::Database.new('db/losen.db')
+- db.results_as_hash = true
+- user_count = db.execute("SELECT COUNT(*) FROM users").first["COUNT(*)"]
+- if user_count == 1
+  h1 du är våran första användare!!!!! (jag vet att du är adminen men ändå låt mig fira min första användare)
 - else 
-  h1 Du är en av våra #{session[:id]} användare
+  h1 Du är en av våra #{user_count} användare
+
 h1 Din nuvarande titel är: #{session[:title]}
 h2 ifall du skulle vilja updatera din titel gör det här
 form action="/uppdatera_titel" method="post"
@@ -28,7 +32,10 @@ h2
   h2 
     a href="/lista_anvandare" En lista på alla användare
 
-h2
-  form action="/radera_profil" method="post"
-    input type="submit" value="Radera min profil" onclick="return confirm('Är du säker på att du vill radera ditt konto?')"
-    
+- if session[:role] == "owner"
+  h2 HAHA DU ÄR ADMIN DU FÅR INTE RADERA DITT KONTO
+- else 
+  h2
+    form action="/radera_profil" method="post"
+      input type="submit" value="Radera min profil" onclick="return confirm('Är du säker på att du vill radera ditt konto?')"
+      

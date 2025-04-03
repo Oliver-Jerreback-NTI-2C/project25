@@ -1,6 +1,12 @@
 h1 Alla användares pass
 
 h2 Push Pass
+-if session[:title] == "Fitness Beginner" 
+  h3 Rekommenderas svårighet mellan 8 - 12
+-elsif session[:title] == "Intermediate Trainer"
+  h3 Rekommenderas svårighet mellan 12 - 18
+-elsif session[:title] == "Advanced Athlete"
+  h3 Rekommenderas svårighet mellan 18 - 24
 table
   thead
     tr
@@ -36,6 +42,12 @@ table
               input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
 
 h2 Pull Pass
+-if session[:title] == "Fitness Beginner" 
+  h3 Rekommenderas svårighet mellan 5 - 7
+-elsif session[:title] == "Intermediate Trainer"
+  h3 Rekommenderas svårighet mellan 7 - 10
+-elsif session[:title] == "Advanced Athlete"
+  h3 Rekommenderas svårighet mellan 10 - 15
 table
   thead
     tr
@@ -65,6 +77,12 @@ table
               input type="submit" value="Radera" onclick="return confirm('Är du säker på att du vill radera detta pass?');"
 
 h2 Legs Pass
+-if session[:title] == "Fitness Beginner" 
+  h3 Rekommenderas svårighet mellan 5 - 7
+-elsif session[:title] == "Intermediate Trainer"
+  h3 Rekommenderas svårighet mellan 7 - 10
+-elsif session[:title] == "Advanced Athlete"
+  h3 Rekommenderas svårighet mellan 10 - 15
 table
   thead
     tr
