@@ -7,7 +7,7 @@ require 'bcrypt'
 enable :sessions
 
 before do
-  protected_routes = ['/projekt', '/skapa', '/profil']
+  protected_routes = ['/skapa', '/profil']
   if protected_routes.include?(request.path_info) && !session[:id]
     redirect('/')
   end
@@ -43,7 +43,6 @@ get('/lista_anvandare') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
 
-  # Hämta alla användare och deras titlar, men filtrera bort användaren med användarnamnet 'admin'
   result = db.execute("SELECT id, username, title FROM users WHERE username != 'admin' ORDER BY username")
 
   slim(:lista_anvandare, locals: { users: result })
@@ -179,10 +178,10 @@ post('/radera_profil') do
     db = SQLite3::Database.new('db/losen.db')
     db.execute("DELETE FROM users WHERE id = ?", [id])
     
-    session.clear  # Logga ut användaren
-    redirect('/')  # Skicka dem tillbaka till startsidan
+    session.clear  
+    redirect('/')  
   else
-    redirect('/profil') # Om ingen session finns, stanna kvar på profilen
+    redirect('/profil') 
   end
 end
 
@@ -190,11 +189,10 @@ post('/radera_anvandare2/:id') do
   user_id = params[:id].to_i
   db = SQLite3::Database.new('db/losen.db')
   
-  # Ta bort användaren från databasen
   db.execute("DELETE FROM users WHERE id = ?", [user_id])
-  db.execute("DELETE FROM scheman WHERE user_id = ?", [user_id]) # Ta bort scheman som är kopplade till användaren
+  db.execute("DELETE FROM scheman WHERE user_id = ?", [user_id]) 
   
-  redirect('/lista_anvandare')  # Skicka användaren tillbaka till användarlistan
+  redirect('/lista_anvandare')  
 end
 
 
@@ -224,33 +222,70 @@ post('/update_pass/:id') do
   transversal_row = params[:transversal_row] || ""
   sagital_pull = params[:sagital_pull] || ""
   curl_variation = params[:curl_variation] || ""
-  hammer_curl_var = params[:hammer_curl_var] || ""  # Matchar HTML-fältet nu
+  hammer_curl_var = params[:hammer_curl_var] || ""  
 
   # Legs Pass
   quad_com = params[:quad_com] || ""
   leg_ext = params[:leg_ext] || ""
   hinge = params[:hinge] || ""
   leg_curl = params[:leg_curl] || ""
-  abbductor = params[:abbductor] || ""  # Fixat stavfel från "abbductor"
+  abbductor = params[:abbductor] || "" 
   calf_raise = params[:calf_raise] || ""
   abs = params[:abs] || ""
 
+  exercise_difficulty = {
+    "Bench press" => 2, "chest press" => 1, "flat dumbell press" => 3,
+    "incline bench press" => 2, "incline chest press" => 1, "incline dumbell press" => 3,
+    "pec deck fly" => 1, "cable fly" => 2, "dumbell fly" => 3,
+    "smith shoulder press" => 2, "dumbell shoulder press" => 3, "machine shoulder press" => 1,
+    "dumbell lateral raise" => 2, "cable lateral raise" => 3, "machine lateral raise" => 1,
+    "reverse fly" => 1, "face pulls" => 2, "cable reverse fly" => 3,
+    "dips" => 2, "tricep pushdown" => 1, "cable tricep extension" => 3,
+    "single arm extension" => 1, "carter extension" => 2, "katana extension" => 3,
+
+    "lat_pulldown" => 1, "pull_up" => 3, "singel_hand_lat_pulldown" => 2,
+    "T-bar_row" => 1, "wide_grip_cable_row" => 3, "chest_supported_wide_grip_row" => 2,
+    "close_grip_row" => 1, "jpg_pulldown" => 2, "pull_overs" => 3,
+    "preacher curl" => 3, "dumbell curl" => 1, "barbell curl" => 2,
+    "hammer curl" => 1, "cable hammer curl" => 2, "preacher hammer curl" => 3,
+
+    "leg press" => 1, "squats" => 3, "hack squat" => 2,
+    "leg extension" => 1, "single lex extension" => 2,
+    "barbell Romanian deadlift" => 3, "dumbell romanian deadlift" => 1, "cable romanian deadlift" => 2,
+    "seated leg curl" => 1, "laying leg curl" => 2,
+    "abbductor machine" => 1,
+    "standing calf raise" => 2, "seated calf raise" => 1, "leg press calf raise" => 3,
+    "cable crunch" => 2, "sit ups" => 1, "roller" => 3
+  }
+
+  difficulty_push = [
+    flat_press_variation, incline_press_variation, fly_variation, shoulder_press_variation,
+    later_raise_variation, rear_delt_variation, tricep_compound, single_arm_extension
+  ].compact.map { |exercise| exercise_difficulty[exercise] || 0 }.sum
+
+  difficulty_pull = [
+    frontal_pull, transversal_row, sagital_pull, curl_variation, hammer_curl_var
+  ].compact.map { |exercise| exercise_difficulty[exercise] || 0 }.sum
+
+  difficulty_legs = [
+    quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, abs
+  ].compact.map { |exercise| exercise_difficulty[exercise] || 0 }.sum
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
 
   db.execute("UPDATE scheman SET 
-              flat_press_variation = ?, incline_press_variation = ?, fly_variation = ?, 
-              shoulder_press_variation = ?, later_raise_variation = ?, rear_delt_variation = ?, 
-              tricep_compound = ?, single_arm_extension = ?, 
-              frontal_pull = ?, transversal_row = ?, sagital_pull = ?, curl_variation = ?, hammer_curl_var = ?, 
-              quad_com = ?, leg_ext = ?, hinge = ?, leg_curl = ?, abbductor = ?, calf_raise = ?, abs = ? 
-              WHERE id = ?", 
-              [flat_press_variation, incline_press_variation, fly_variation, 
-               shoulder_press_variation, later_raise_variation, rear_delt_variation, 
-               tricep_compound, single_arm_extension, frontal_pull, transversal_row, sagital_pull, 
-               curl_variation, hammer_curl_var, quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, 
-               abs, id])
-
+             flat_press_variation = ?, incline_press_variation = ?, fly_variation = ?, 
+             shoulder_press_variation = ?, later_raise_variation = ?, rear_delt_variation = ?, 
+             tricep_compound = ?, single_arm_extension = ?, 
+             frontal_pull = ?, transversal_row = ?, sagital_pull = ?, curl_variation = ?, hammer_curl_var = ?, 
+             quad_com = ?, leg_ext = ?, hinge = ?, leg_curl = ?, abbductor = ?, calf_raise = ?, abs = ?, 
+             difficulty_push = ?, difficulty_pull = ?, difficulty_legs = ? 
+             WHERE id = ?", 
+             [flat_press_variation, incline_press_variation, fly_variation, 
+              shoulder_press_variation, later_raise_variation, rear_delt_variation, 
+              tricep_compound, single_arm_extension, frontal_pull, transversal_row, sagital_pull, 
+              curl_variation, hammer_curl_var, quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, 
+              abs, difficulty_push, difficulty_pull, difficulty_legs, id])
   db.close
   redirect('/mina_pass')
 end
@@ -281,33 +316,70 @@ post('/update_pass2/:id') do
   transversal_row = params[:transversal_row] || ""
   sagital_pull = params[:sagital_pull] || ""
   curl_variation = params[:curl_variation] || ""
-  hammer_curl_var = params[:hammer_curl_var] || ""  # Matchar HTML-fältet nu
+  hammer_curl_var = params[:hammer_curl_var] || "" 
 
   # Legs Pass
   quad_com = params[:quad_com] || ""
   leg_ext = params[:leg_ext] || ""
   hinge = params[:hinge] || ""
   leg_curl = params[:leg_curl] || ""
-  abbductor = params[:abbductor] || ""  # Fixat stavfel från "abbductor"
+  abbductor = params[:abbductor] || ""  
   calf_raise = params[:calf_raise] || ""
   abs = params[:abs] || ""
 
+  exercise_difficulty = {
+    "Bench press" => 2, "chest press" => 1, "flat dumbell press" => 3,
+    "incline bench press" => 2, "incline chest press" => 1, "incline dumbell press" => 3,
+    "pec deck fly" => 1, "cable fly" => 2, "dumbell fly" => 3,
+    "smith shoulder press" => 2, "dumbell shoulder press" => 3, "machine shoulder press" => 1,
+    "dumbell lateral raise" => 2, "cable lateral raise" => 3, "machine lateral raise" => 1,
+    "reverse fly" => 1, "face pulls" => 2, "cable reverse fly" => 3,
+    "dips" => 2, "tricep pushdown" => 1, "cable tricep extension" => 3,
+    "single arm extension" => 1, "carter extension" => 2, "katana extension" => 3,
+
+    "lat_pulldown" => 1, "pull_up" => 3, "singel_hand_lat_pulldown" => 2,
+    "T-bar_row" => 1, "wide_grip_cable_row" => 3, "chest_supported_wide_grip_row" => 2,
+    "close_grip_row" => 1, "jpg_pulldown" => 2, "pull_overs" => 3,
+    "preacher curl" => 3, "dumbell curl" => 1, "barbell curl" => 2,
+    "hammer curl" => 1, "cable hammer curl" => 2, "preacher hammer curl" => 3,
+
+    "leg press" => 1, "squats" => 3, "hack squat" => 2,
+    "leg extension" => 1, "single lex extension" => 2,
+    "barbell Romanian deadlift" => 3, "dumbell romanian deadlift" => 1, "cable romanian deadlift" => 2,
+    "seated leg curl" => 1, "laying leg curl" => 2,
+    "abbductor machine" => 1,
+    "standing calf raise" => 2, "seated calf raise" => 1, "leg press calf raise" => 3,
+    "cable crunch" => 2, "sit ups" => 1, "roller" => 3
+  }
+
+  difficulty_push = [
+    flat_press_variation, incline_press_variation, fly_variation, shoulder_press_variation,
+    later_raise_variation, rear_delt_variation, tricep_compound, single_arm_extension
+  ].compact.map { |exercise| exercise_difficulty[exercise] || 0 }.sum
+
+  difficulty_pull = [
+    frontal_pull, transversal_row, sagital_pull, curl_variation, hammer_curl_var
+  ].compact.map { |exercise| exercise_difficulty[exercise] || 0 }.sum
+
+  difficulty_legs = [
+    quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, abs
+  ].compact.map { |exercise| exercise_difficulty[exercise] || 0 }.sum
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
 
   db.execute("UPDATE scheman SET 
-              flat_press_variation = ?, incline_press_variation = ?, fly_variation = ?, 
-              shoulder_press_variation = ?, later_raise_variation = ?, rear_delt_variation = ?, 
-              tricep_compound = ?, single_arm_extension = ?, 
-              frontal_pull = ?, transversal_row = ?, sagital_pull = ?, curl_variation = ?, hammer_curl_var = ?, 
-              quad_com = ?, leg_ext = ?, hinge = ?, leg_curl = ?, abbductor = ?, calf_raise = ?, abs = ? 
-              WHERE id = ?", 
-              [flat_press_variation, incline_press_variation, fly_variation, 
-               shoulder_press_variation, later_raise_variation, rear_delt_variation, 
-               tricep_compound, single_arm_extension, frontal_pull, transversal_row, sagital_pull, 
-               curl_variation, hammer_curl_var, quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, 
-               abs, id])
-
+             flat_press_variation = ?, incline_press_variation = ?, fly_variation = ?, 
+             shoulder_press_variation = ?, later_raise_variation = ?, rear_delt_variation = ?, 
+             tricep_compound = ?, single_arm_extension = ?, 
+             frontal_pull = ?, transversal_row = ?, sagital_pull = ?, curl_variation = ?, hammer_curl_var = ?, 
+             quad_com = ?, leg_ext = ?, hinge = ?, leg_curl = ?, abbductor = ?, calf_raise = ?, abs = ?, 
+             difficulty_push = ?, difficulty_pull = ?, difficulty_legs = ? 
+             WHERE id = ?", 
+             [flat_press_variation, incline_press_variation, fly_variation, 
+              shoulder_press_variation, later_raise_variation, rear_delt_variation, 
+              tricep_compound, single_arm_extension, frontal_pull, transversal_row, sagital_pull, 
+              curl_variation, hammer_curl_var, quad_com, leg_ext, hinge, leg_curl, abbductor, calf_raise, 
+              abs, difficulty_push, difficulty_pull, difficulty_legs, id])
   db.close
   redirect('/alla_pass')
 end
@@ -325,13 +397,11 @@ post('/uppdatera_titel') do
 
   db = SQLite3::Database.new('db/losen.db')
 
-  # Om en owner uppdaterar en annan användares titel
   if session[:role] == "owner" && user_id
     db.execute("UPDATE users SET title = ? WHERE id = ?", [new_title, user_id])
-  # Annars uppdaterar användaren bara sin egen titel
   elsif session[:id]
     db.execute("UPDATE users SET title = ? WHERE id = ?", [new_title, session[:id]])
-    session[:title] = new_title  # Uppdatera sessionen direkt
+    session[:title] = new_title  
   end
 
   redirect('/profil')
@@ -342,7 +412,6 @@ get('/alla_pass') do
   db = SQLite3::Database.new('db/losen.db')
   db.results_as_hash = true
   
-  # Hämta alla pass och inkludera användarnamn från users-tabellen
   result = db.execute("SELECT scheman.*, users.username FROM scheman 
                       JOIN users ON scheman.user_id = users.id 
                       ORDER BY users.username DESC, scheman.id DESC")
