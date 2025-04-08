@@ -14,11 +14,11 @@ before do
 end
 
 get('/showlogin') do
-  slim(:login)
+  slim(:"login")
 end
 
 get('/') do
-  slim(:register)
+  slim(:"register")
 end
 
 post('/login') do
@@ -39,14 +39,14 @@ post('/login') do
   end
 end
 
-get('/projekt') do
-  id = session[:id].to_i
+get('/lista_anvandare') do
   db = SQLite3::Database.new('db/losen.db')
-  db.results_as_hash = true 
-  result = db.execute("SELECT * FROM projekt WHERE user_id = ?",id)
-  result = db.execute("SELECT * FROM projekt WHERE title = ?",title)
-  p "Alla projekt från result #{result}"
-  slim(:'projekt/index', locals:{projekt:result})
+  db.results_as_hash = true
+
+  # Hämta alla användare och deras titlar, men filtrera bort användaren med användarnamnet 'admin'
+  result = db.execute("SELECT id, username, title FROM users WHERE username != 'admin' ORDER BY username")
+
+  slim(:lista_anvandare, locals: { users: result })
 end
 
 post('/users/new') do 
@@ -156,7 +156,7 @@ post('/pass_skapare') do
 end
 
 get('/profil') do
-  slim(:se_profil)
+slim(:se_profil)
 end
 
 get('/logout') do
@@ -198,13 +198,13 @@ post('/radera_anvandare2/:id') do
 end
 
 
-  get('/redigera_pass2/:id') do
-    id = params[:id].to_i
-    db = SQLite3::Database.new('db/losen.db')
-    db.results_as_hash = true
-    pass = db.execute("SELECT * FROM scheman WHERE id = ?", [id]).first
-    slim(:redigera_pass2, locals: { pass: pass })
-  end
+get('/redigera_pass2/:id') do
+  id = params[:id].to_i
+  db = SQLite3::Database.new('db/losen.db')
+  db.results_as_hash = true
+  pass = db.execute("SELECT * FROM scheman WHERE id = ?", [id]).first
+  slim(:redigera_pass2, locals: { pass: pass })
+end
 
 post('/update_pass/:id') do
   id = params[:id].to_i
@@ -350,14 +350,6 @@ get('/alla_pass') do
   slim(:alla_pass, locals: { pass: result })
 end
 
-get('/lista_anvandare') do
-  db = SQLite3::Database.new('db/losen.db')
-  db.results_as_hash = true
 
-  # Hämta alla användare och deras titlar, men filtrera bort användaren med användarnamnet 'admin'
-  result = db.execute("SELECT id, username, title FROM users WHERE username != 'admin' ORDER BY username")
-
-  slim(:lista_anvandare, locals: { users: result })
-end
 
 
